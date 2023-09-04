@@ -6,18 +6,7 @@
 <body>
     <h1>Credit Card Payment Form</h1>
     <form id="payment-form">
-        <label for="card-number">Card Number:</label>
-        <input type="text" id="card-number" placeholder="Card Number" required><br><br>
-        
-        <label for="card-name">Cardholder Name:</label>
-        <input type="text" id="card-name" placeholder="Cardholder Name" required><br><br>
-        
-        <label for="expiration-date">Expiration Date:</label>
-        <input type="text" id="expiration-date" placeholder="MM/YY" required><br><br>
-        
-        <label for="cvv">CVV:</label>
-        <input type="text" id="cvv" placeholder="CVV" required><br><br>
-        
+        <!-- ... (Input fields for card information) -->
         <button type="button" id="submit-button">Submit Payment</button>
     </form>
 
@@ -25,25 +14,39 @@
 
     <script>
         document.getElementById("submit-button").addEventListener("click", function () {
-            // Simulate payment processing (replace with actual payment processing logic)
+            // Get data from input fields
             const cardNumber = document.getElementById("card-number").value;
             const cardName = document.getElementById("card-name").value;
             const expirationDate = document.getElementById("expiration-date").value;
             const cvv = document.getElementById("cvv").value;
 
-            // Display a payment result (for demonstration purposes)
-            const paymentResult = document.getElementById("payment-result");
-            paymentResult.innerHTML = `
-                <h2>Payment Confirmation</h2>
-                <p>Card Number: ${cardNumber}</p>
-                <p>Cardholder Name: ${cardName}</p>
-                <p>Expiration Date: ${expirationDate}</p>
-                <p>CVV: ${cvv}</p>
-                <p>Payment processed successfully.</p>
-            `;
+            // Create a data object to send to the server
+            const data = {
+                cardNumber,
+                cardName,
+                expirationDate,
+                cvv
+            };
 
-            // Clear the form (for demonstration purposes)
-            document.getElementById("payment-form").reset();
+            // Send data to the server using a fetch request
+            fetch("process_payment.php", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                const paymentResult = document.getElementById("payment-result");
+                paymentResult.innerHTML = `
+                    <h2>Payment Confirmation</h2>
+                    <p>${result.message}</p>
+                `;
+            })
+            .catch(error => {
+                console.error("Error:", error);
+            });
         });
     </script>
 </body>
